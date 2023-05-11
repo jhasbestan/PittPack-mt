@@ -50,8 +50,8 @@ int main( int argcs, char *pArgs[] )
     int NXCHUNK = atoi( pArgs[1] );
     int NYCHUNK = atoi( pArgs[2] );
     int NZCHUNK = atoi( pArgs[3] );
-
-    if ( MPI_Init( &argcs, &pArgs ) != MPI_SUCCESS )
+    int provided;
+    if ( MPI_Init_thread( &argcs, &pArgs,MPI_THREAD_FUNNELED, &provided) != MPI_SUCCESS )
     {
         cout << " Exit Code : " << PittPackGetErrorEnum( MPI_INIT_FAIL ) << endl;
         exit( 1 );
@@ -79,7 +79,7 @@ int main( int argcs, char *pArgs[] )
     //  char mybc[6] = {'N', 'N', 'N', 'N', 'N', 'N'};
     // char mybc[6] = {'D', 'D', 'D', 'D', 'D', 'D'};
 
-     char mybc[6] = {'N', 'N', 'N', 'N', 'D', 'D'};
+    char mybc[6] = {'N', 'N', 'N', 'N', 'D', 'D'};
     // char mybc[6] = {'D', 'D', 'D', 'D', 'P', 'P'};
     //char mybc[6] = {'P', 'P', 'P', 'P', 'N', 'N'};
     //       char mybc[6] = {'D', 'D', 'D', 'D', 'P', 'P'};

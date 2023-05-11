@@ -131,7 +131,7 @@ PencilDcmp::PencilDcmp( int n0, int n1, int n2, int px, int py )
 
     dl[0]      = 0.0;
     du[nz - 1] = 0.0;
-
+#pragma omp simd
     for ( int i = 1; i < nz; i++ )
     {
         dl[i]     = 1.0;
@@ -356,7 +356,7 @@ PencilDcmp::PencilDcmp( int argcs, char *pArgs[], int n0, int n1, int n2 )
 
     dl[0]      = 0.0;
     du[nz - 1] = 0.0;
-
+#pragma omp simd
     for ( int i = 1; i < nz; i++ )
     {
         dl[i]     = 1.0;
@@ -461,6 +461,7 @@ void PencilDcmp::setDiag( int i, int j )
 #if ( PITTPACKACC )
 #pragma acc loop
 #endif
+#pragma omp simd
     for ( int i = 0; i < nz; i++ )
     {
         ds[i] = eig;
@@ -871,6 +872,7 @@ PittPackResult PencilDcmp::constructConnectivity()
 
     id = myRank % p0;
 
+#pragma omp simd
     for ( int i = 0; i < p0; i++ )
     {
         Nbrs[1][i] = id + i * p0;
@@ -5079,6 +5081,7 @@ int PencilDcmp::solveThmBatch( const int index )
 #if ( PITTPACKACC )
 #pragma acc loop private( eig )
 #endif
+#pragma omp parallel for
         for ( int i = 0; i < nyChunk; i++ )
         {
             eig = getEigenVal( i, j );
@@ -5089,7 +5092,7 @@ int PencilDcmp::solveThmBatch( const int index )
             if ( bc[4] != 'P' )
             {
                 T.thomasLowMem( x2 + i * nz, x1 + nz * i, eig, index );
-                // cout<< RED<<"solveThmBatch 0" <<RESET<<endl;
+                 cout<< RED<<"solveThmBatch 0" <<RESET<<endl;
             }
             else
             {
@@ -5118,15 +5121,17 @@ int PencilDcmp::solveThmBatch( const int index )
         }
     */
 
-    //    cout<< RED<<"solveThmBatch" <<RESET<<endl;
+     //   cout<< RED<<"solveThmBatch" <<RESET<<endl;
 
     //    clear(x2);
 
+    cout<< RED<<"full batch solveThmBatch" <<RESET<<endl;
     int count = 0;
     int i, j;
 #if ( PITTPACKACC )
 #pragma acc loop private( eig, i, j )
 #endif
+#pragma omp parallel for private( eig, i, j )
     for ( int l = 0; l < nyChunk * nxChunk; l++ )
     {
         i = l % nyChunk;
@@ -5135,18 +5140,17 @@ int PencilDcmp::solveThmBatch( const int index )
         fillInArrayContig( i, j, index, x1 + l * nz );
         // T.thomasLowMem( x2 + l * nz, x1 + nz * l, eig, index );
 
-        //     cout<< RED<<"solveThmBatch" <<RESET<<endl;
         if ( bc[4] != 'P' )
         {
             T.thomasLowMem( x2 + l * nz, x1 + nz * l, eig, index );
         }
         else
         {
-            // cout<< RED<<"solve full batch N" <<RESET<<endl;
+            cout<< RED<<"solve full batch with Sherman" <<RESET<<endl;
             //   this is too strong for enforcing boundries.
             //    T.shermanMorrisonThomas( x2 + l * nz, x1 + nz * l, x3+l*nz ,eig, 0.0 ,-eig, index );
-            T.shermanMorrisonThomasV1( x2 + l * nz, x1 + nz * l, x3 + l * nz, eig, 0.0, 1.0, index );
-            // T.shermanMorrisonThomas( x2 + l * nz, x1 + nz * l, x3 + l * nz, eig, 1.0, 1.0, index );
+            //T.shermanMorrisonThomasV1( x2 + l * nz, x1 + nz * l, x3 + l * nz, eig, 0.0, 1.0, index );
+            T.shermanMorrisonThomas( x2 + l * nz, x1 + nz * l, x3 + l * nz, eig, 1.0, 1.0, index );
         }
 
         fillInArrayBack( i, j, index, x1 + nz * l );

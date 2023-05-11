@@ -83,6 +83,7 @@ void SignalProc::postprocessSignalDCT01( ChunkedArray &P, const int size, const 
 #if ( PITTPACKACC )
 #pragma acc loop vector
 #endif
+#pragma omp simd
     for ( int i = 0; i < upperBound; i++ )
     {
         P( 2 * ( j * size + 2 * i ) + 1 ) = P( 2 * ( j * size + i ) );
@@ -93,6 +94,7 @@ void SignalProc::postprocessSignalDCT01( ChunkedArray &P, const int size, const 
 #if ( PITTPACKACC )
 #pragma acc loop vector
 #endif
+#pragma omp simd
     for ( int i = 0; i < size / 2; i++ )
     {
         P( 2 * ( j * size + 2 * i + 1 ) + 1 ) = P( 2 * ( j * size + size - i - 1 ) );
@@ -100,6 +102,7 @@ void SignalProc::postprocessSignalDCT01( ChunkedArray &P, const int size, const 
 #if ( PITTPACKACC )
 #pragma acc loop vector
 #endif
+#pragma omp simd
     for ( int i = 0; i < size; i++ )
     {
         P( 2 * ( i + j * size ) )     = P( 2 * ( i + j * size ) + 1 );
@@ -121,6 +124,7 @@ void SignalProc::preprocessSignalDCT01( ChunkedArray &P, const int size, const i
 #if ( PITTPACKACC )
 #pragma acc loop vector
 #endif
+#pragma omp simd
     for ( int j = 1; j < size / 2 + 1; j++ )
     {
         theta = theta0 * j;
@@ -137,6 +141,7 @@ void SignalProc::preprocessSignalDCT01( ChunkedArray &P, const int size, const i
 #if ( PITTPACKACC )
 #pragma acc loop vector
 #endif
+#pragma omp simd
     for ( int j = size / 2 + 1; j < size; j++ )
     {
         P( 2 * ( i * size + j ) )     = P( 2 * ( i * size + size - j ) );
@@ -146,6 +151,7 @@ void SignalProc::preprocessSignalDCT01( ChunkedArray &P, const int size, const i
 #if ( PITTPACKACC )
 #pragma acc loop vector
 #endif
+#pragma omp simd
     for ( int j = size / 2 + 1; j < size; j++ )
     {
         P( 2 * ( i * size + j ) )     = P( 2 * ( i * size + size - j ) );
@@ -167,6 +173,7 @@ void SignalProc::preprocessSignalDCT10( ChunkedArray &P, const int size, const i
 #if ( PITTPACKACC )
 #pragma acc loop vector
 #endif
+#pragma omp simd
     for ( int j = 0; j < upperBound; j++ )
     {
         P( 2 * ( i * size + j ) + 1 ) = P( 2 * ( i * size + 2 * j ) );
@@ -177,6 +184,7 @@ void SignalProc::preprocessSignalDCT10( ChunkedArray &P, const int size, const i
 #if ( PITTPACKACC )
 #pragma acc loop vector
 #endif
+#pragma omp simd
     for ( int j = istart; j < size; j++ )
     {
         P( 2 * ( i * size + j ) + 1 ) = P( 2 * i * size + 2 * ( size - 2 * ( j - istart ) - 1 - idx ) );
@@ -186,6 +194,7 @@ void SignalProc::preprocessSignalDCT10( ChunkedArray &P, const int size, const i
 #if ( PITTPACKACC )
 #pragma acc loop vector private( tmp )
 #endif
+#pragma omp simd
     for ( int j = 0; j < size; j++ )
     {
         tmp                           = P( 2 * ( i * size + j ) + 1 );
@@ -244,6 +253,7 @@ void SignalProc::swap( ChunkedArray &P, const int size, const int i, const int d
 #if ( PITTPACKACC )
 #pragma acc loop vector
 #endif
+#pragma omp simd
     for ( int j = 0; j < size; j++ )
     {
         P( 2 * ( i * size + j ) + 1 ) = P( 2 * ( i * size + size - j - 1 ) );
@@ -257,6 +267,7 @@ void SignalProc::swap( ChunkedArray &P, const int size, const int i, const int d
 #if ( PITTPACKACC )
 #pragma acc loop vector
 #endif
+#pragma omp simd
     for ( int j = 0; j < size; j++ )
     {
         P( 2 * ( i * size + j ) )     = P( 2 * ( i * size + j ) + 1 );

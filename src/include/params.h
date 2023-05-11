@@ -126,7 +126,7 @@ const double pi = 3.1415926535897932384;
 #define USE_SHARED 0 /*!< set to 0 will use global memory, set to 1 will use shared memory*/
 #define REVTRSP 1    /*!< 1) stands for simplest transform. 0) transposes using shared mem*/
 #define R_COPY 1
-#define THOM_FULL_BATCH 0 /*! full batch=1 refers to 2D batch of the system of tridiagonal solves, 0 implies x-dimenional batching only*/
+#define THOM_FULL_BATCH 1 /*! full batch=1 refers to 2D batch of the system of tridiagonal solves, 0 implies x-dimenional batching only*/
 #define JIC 0
 
 PittPackResult OPENACC_Init( int &my_rank, int &com_size );       /*!< Initializes the GPU's. equivalent to MPI_Init()  */
