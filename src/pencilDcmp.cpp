@@ -1369,6 +1369,7 @@ void PencilDcmp::nbrAllToAllZX()
 #if ( PITTPACKACC )
 #pragma acc parallel loop num_gangs( 1024 )
 #endif
+#pragma omp parallel for simd
     for ( int l = 0; l < nChunk * R.chunkSize; l++ )
     {
         R( l ) = P( l );
@@ -1601,6 +1602,7 @@ void PencilDcmp::nbrAllToAllXY()
 #if ( PITTPACKACC )
 #pragma acc parallel loop
 #endif
+#pragma omp parallel for simd
     for ( int l = 0; l < nChunk * R.chunkSize; l++ )
     {
         R( l ) = P( l );
@@ -1873,7 +1875,7 @@ static double exactValue( double omega, double x, int tg )
 void PencilDcmp::initializeTrigonometric()
 {
     double pi = 4. * arctan( 1.0 );
-    double x, y, z;
+//    double x, y, z;
 
     double Xa = coords[0];
     double Ya = coords[2];
@@ -1921,6 +1923,7 @@ void PencilDcmp::initializeTrigonometric()
 #endif
     for ( int k = 0; k < Nz; k++ )
     {
+        double z;
         if ( !SHIFT )
         {
             z = Za + ( k + 1 ) * c3;
@@ -1933,8 +1936,10 @@ void PencilDcmp::initializeTrigonometric()
 #if ( PITTPACKACC )
 #pragma acc loop worker private( y )
 #endif
+#pragma omp parallel for
         for ( int j = 0; j < Ny; j++ )
         {
+            double y;
             if ( !SHIFT )
             {
                 y = Ya + ( j + 1 ) * c2;
@@ -1947,8 +1952,10 @@ void PencilDcmp::initializeTrigonometric()
 #if ( PITTPACKACC )
 #pragma acc loop vector
 #endif
+#pragma omp simd
             for ( int i = 0; i < Nx; i++ )
             {
+                double x;
                 if ( !SHIFT )
                 {
                     x = Xa + ( i + 1 ) * c1;
@@ -2086,6 +2093,7 @@ double PencilDcmp::getError()
 #endif
     for ( int k = 0; k < Nz; k++ )
     {
+        double z;
         if ( !SHIFT )
         {
             z = Za + ( k + 1 ) * c3;
@@ -2098,8 +2106,10 @@ double PencilDcmp::getError()
 #if ( PITTPACKACC )
 #pragma acc loop worker
 #endif
+#pragma omp parallel for 
         for ( int j = 0; j < Ny; j++ )
         {
+            double y;
             if ( !SHIFT )
             {
                 y = Ya + ( j + 1 ) * c2;
@@ -2112,8 +2122,10 @@ double PencilDcmp::getError()
 #if ( PITTPACKACC )
 #pragma acc loop vector private( val, val1 )
 #endif
+#pragma omp simd
             for ( int i = 0; i < Nx; i++ )
             {
+                double x;
                 if ( !SHIFT )
                 {
                     x = Xa + ( i + 1 ) * c1;
@@ -2326,11 +2338,13 @@ void PencilDcmp::assignTempX2Yv1( const int chunkId )
 #if ( PITTPACKACC )
 #pragma acc loop worker
 #endif
+#pragma omp parallel for
         for ( int j = 0; j < nyChunk; j++ )
         {
 #if ( PITTPACKACC )
 #pragma acc loop vector
 #endif
+#pragma omp simd
             for ( int i = 0; i < nxChunk; i++ )
             {
                 //   tmp[2 * ( nxChunk * j + i )] = P( chunkId, 0, i, j, k, 0 );
@@ -2359,11 +2373,13 @@ void PencilDcmp::assignBackTempX2Y( const int chunkId )
 #if ( PITTPACKACC )
 #pragma acc loop worker
 #endif
+#pragma omp parallel for
         for ( int j = 0; j < nyChunk; j++ )
         {
 #if ( PITTPACKACC )
 #pragma acc loop vector
 #endif
+#pragma omp simd
             for ( int i = 0; i < nxChunk; i++ )
             {
                 //          P( chunkId, 1, i, j, k, 0 )=i+3*j;
@@ -2394,11 +2410,13 @@ void PencilDcmp::assignTempY2X( const int chunkId )
 #if ( PITTPACKACC )
 #pragma acc loop worker
 #endif
+#pragma omp parallel for
         for ( int i = 0; i < nxChunk; i++ )
         {
 #if ( PITTPACKACC )
 #pragma acc loop vector
 #endif
+#pragma omp simd
             for ( int j = 0; j < nyChunk; j++ )
             {
                 //   tmp[2 * ( nxChunk * j + i )] = P( chunkId, 0, i, j, k, 0 );
@@ -2438,11 +2456,13 @@ void PencilDcmp::assignBackTempY2X( const int chunkId )
 #if ( PITTPACKACC )
 #pragma acc loop worker
 #endif
+#pragma omp parallel for
         for ( int i = 0; i < nxChunk; i++ )
         {
 #if ( PITTPACKACC )
 #pragma acc loop vector
 #endif
+#pragma omp simd
             for ( int j = 0; j < nyChunk; j++ )
             {
                 // P( chunkId, 0, i, j, k, 0 ) = R( 0, 1, i, j, k, 0 );

@@ -10,6 +10,6 @@ module load hpcx
 export CC=icc
 export CXX=icpc
 
-cd build && cmake .. && make -j 8 && cd ../bin
+cd build && cmake .. && make -j 8 && cd ../
 
 

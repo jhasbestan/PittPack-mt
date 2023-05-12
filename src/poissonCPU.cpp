@@ -1,5 +1,6 @@
 #include "definitions.h"
 #include "params.h"
+#include "params.h"
 #include "pencilDcmp.hpp"
 
 void PoissonCPU::writeYLine( int j, fftw_complex *outC )
@@ -41,8 +42,11 @@ void PoissonCPU::readYLine( int j, fftw_complex *out )
 
 void PoissonCPU::performTransformYdir()
 {
-//cout<<" cpu version "<<endl;
+cout<<" cpu version "<<endl;
+
 #if(!PITTPACKACC)
+#pragma omp parallel
+{
     fftw_plan pl;
 
     fftw_complex *in;
@@ -50,7 +54,7 @@ void PoissonCPU::performTransformYdir()
 
     fftw_complex *out;
     out = (fftw_complex *)fftw_malloc( nChunk * nyChunk * sizeof( fftw_complex ) );
-
+#pragma omp for
     for ( int j = 0; j < nxChunk * nzChunk; j++ )
     {
         readYLine( j, in );
@@ -66,6 +70,7 @@ void PoissonCPU::performTransformYdir()
 
     fftw_free( out );
     fftw_free( in );
+}
 #endif
 //    fftw_destroy_plan(pl);
 //    fftw_cleanup();
@@ -74,6 +79,8 @@ void PoissonCPU::performTransformYdir()
 
 void PoissonCPU::performInverseTransformYdir()
 {
+#pragma omp parallel
+{
 #if(!PITTPACKACC)
     fftw_plan     pl;
     fftw_complex *in;
@@ -81,7 +88,7 @@ void PoissonCPU::performInverseTransformYdir()
 
     fftw_complex *out;
     out = (fftw_complex *)fftw_malloc( nChunk * nyChunk * sizeof( fftw_complex ) );
-
+#pragma omp for
     for ( int j = 0; j < nxChunk * nzChunk; j++ )
     {
         readYLine( j, in );
@@ -98,6 +105,7 @@ void PoissonCPU::performInverseTransformYdir()
     
     fftw_free( out );
     fftw_free( in );
+}
 #endif
 
 }
@@ -152,13 +160,15 @@ void PoissonCPU::writeXLine( int j, fftw_complex *outC )
 void PoissonCPU::performInverseTransformXdir()
 {
 #if(!PITTPACKACC)
+#pragma omp parallel
+{
     fftw_plan     pl;
     fftw_complex *in;
     in = (fftw_complex *)fftw_malloc( nChunk * nxChunk * sizeof( fftw_complex ) );
 
     fftw_complex *out;
     out = (fftw_complex *)fftw_malloc( nChunk * nxChunk * sizeof( fftw_complex ) );
-
+#pragma omp for
     for ( int j = 0; j < nyChunk * nzChunk; j++ )
     {
         readXLine( j, in );
@@ -176,6 +186,7 @@ void PoissonCPU::performInverseTransformXdir()
     fftw_free( out );
     fftw_free( in );
  
+}
 #endif
 }
 
