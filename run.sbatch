@@ -4,10 +4,10 @@
 #SBATCH --mail-user=jaber.hasbestan@amd.com
 #SBATCH --mail-type=END,FAIL
 #SBATCH --time=23:00:00
-#SBATCH --nodes=8
+#SBATCH --nodes=2
 #SBATCH --ntasks-per-node=128
 #SBATCH --exclusive
-#SBATCH --error=jjh%j.error
+#SBATCH --error=slurm-%j.error
 #SBATCH --ntasks-per-core=1
 
 
@@ -20,5 +20,5 @@ nodelist="$(scontrol show hostname $SLURM_NODELIST)"
 
 printf "%s\n" "${nodelist[@]}" > hostfile
 
-##mpirun -np 16 --hostfile hostfile --map-by ppr:1:l3cache:PE=8 ./bin/PittPack 128 128 128 
-mpirun -np $SLURM_NTASKS --hostfile hostfile  ./bin/PittPack 128 128 128 
+mpirun -np 16 --hostfile hostfile --map-by ppr:1:l3cache:PE=8 ./bin/PittPack 128 128 128 
+#mpirun -np $SLURM_NTASKS --hostfile hostfile  ./bin/PittPack 128 128 128 
