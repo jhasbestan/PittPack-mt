@@ -5715,7 +5715,7 @@ void PencilDcmp::fillTrigonometric( double *rhs )
     }
 
     double omega[3] = {COEFF0 * pi, COEFF1 * pi, COEFF2 * pi};
-
+#pragma omp parallel for
     for ( int k = 0; k < Nz; k++ )
     {
         if ( !SHIFT )
@@ -5726,7 +5726,7 @@ void PencilDcmp::fillTrigonometric( double *rhs )
         {
             z = Za + k * c3 + shift * c3 * 0.5;
         }
-
+#pragma omp simd
         for ( int j = 0; j < Ny; j++ )
         {
             if ( !SHIFT )
