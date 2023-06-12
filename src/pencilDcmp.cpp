@@ -1150,7 +1150,8 @@ void PencilDcmp::changeOwnershipPairwiseExchangeXY()
 #endif
 
 //#pragma acc data present(P.P,R.P)
-#pragma acc parallel loop
+//#pragma acc parallel loop
+#pragma omp parallel for
         for ( int k = 0; k < P.chunkSize; k++ )
         {
             P( k + P.chunkSize * getPeriodicIndexStride( -j ) ) = R( k );
@@ -1797,6 +1798,7 @@ void PencilDcmp::nbrAllToAllXYOverlap()
 #pragma acc data present( P.P, R.P, this ) copyin( indx )
 #pragma acc parallel loop num_gangs( 1024 )
 #endif
+#pragma omp parallel for simd
         for ( int l = 0; l < P.chunkSize; l++ )
         {
             P( P.chunkSize * indx + l ) = R( R.chunkSize * indx + l );
@@ -3422,6 +3424,7 @@ void PencilDcmp::restoreLocationX()
 #if ( PITTPACKACC )
 #pragma acc loop gang private( tm[2 * TMPSIZE] )
 #endif
+#pragma omp parralel for private( tm[2 * TMPSIZE] )
     for ( sint i = 0; i < iaxSize; i++ )
     {
         //        tm = tmpX + 2 * i * nxChunk;
@@ -3461,6 +3464,7 @@ void PencilDcmp::saveToDest( const sint source, const sint dest, sint dir )
 #if ( PITTPACKACC )
 #pragma acc loop vector
 #endif
+#pragma omp simd
     for ( sint i = 0; i < 2 * N; i++ )
     {
         P( 2 * dest * N + i ) = P( 2 * source * N + i );
@@ -3488,6 +3492,7 @@ void PencilDcmp::saveTmpToDest( const double *tmp, const sint dest, sint dir )
 #if ( PITTPACKACC )
 #pragma acc loop vector
 #endif
+#pragma omp simd
     for ( sint i = 0; i < 2 * N; i++ )
     {
         P( 2 * dest * N + i ) = tmp[i];
@@ -4522,6 +4527,7 @@ void PencilDcmp::preprocessSignalAccordingly( const int direction, const int cou
 #if ( PITTPACKACC )
 #pragma acc loop gang
 #endif
+#pragma omp parallel for simd
         for ( int k = 0; k < nzChunk * limit0; k++ )
         {
             Sig.preprocessSignalDST10( P, size, k, direction );
@@ -4533,6 +4539,7 @@ void PencilDcmp::preprocessSignalAccordingly( const int direction, const int cou
 #if ( PITTPACKACC )
 #pragma acc loop gang
 #endif
+#pragma omp parallel for simd
         for ( int k = 0; k < nzChunk * limit0; k++ )
         {
             Sig.preprocessSignalDCT10( P, size, k, direction );
@@ -4562,6 +4569,7 @@ void PencilDcmp::postprocessSignalAccordingly( const int direction, const int co
 #if ( PITTPACKACC )
 #pragma acc loop gang
 #endif
+#pragma omp parallel for
         for ( int k = 0; k < limit0 * nzChunk; k++ )
         {
             Sig.postprocessSignalDST10( P, size, k, direction );
@@ -4572,6 +4580,7 @@ void PencilDcmp::postprocessSignalAccordingly( const int direction, const int co
 #if ( PITTPACKACC )
 #pragma acc loop gang
 #endif
+#pragma omp parallel for
         for ( int k = 0; k < nzChunk * limit0; k++ )
         {
             Sig.postprocessSignalDCT10( P, size, k, direction );
@@ -4601,6 +4610,7 @@ void PencilDcmp::postprocessSignalAccordinglyReverse( const int direction, const
 #if ( PITTPACKACC )
 #pragma acc loop gang
 #endif
+#pragma omp parallel for
         for ( int k = 0; k < nzChunk * limit0; k++ )
         {
             Sig.postprocessSignalDST01( P, size, k, direction );
@@ -4611,6 +4621,7 @@ void PencilDcmp::postprocessSignalAccordinglyReverse( const int direction, const
 #if ( PITTPACKACC )
 #pragma acc loop gang
 #endif
+#pragma omp parallel for
         for ( int k = 0; k < nzChunk * limit0; k++ )
         {
             Sig.postprocessSignalDCT01( P, size, k, direction );
@@ -4641,6 +4652,7 @@ void PencilDcmp::preprocessSignalAccordinglyReverse( const int direction, const 
 #if ( PITTPACKACC )
 #pragma acc loop gang
 #endif
+#pragma omp parallel for
         for ( int k = 0; k < nzChunk * limit0; k++ )
         {
             Sig.preprocessSignalDST01( P, size, k, direction );
@@ -4651,6 +4663,7 @@ void PencilDcmp::preprocessSignalAccordinglyReverse( const int direction, const 
 #if ( PITTPACKACC )
 #pragma acc loop gang
 #endif
+#pragma omp parallel for
         for ( int k = 0; k < nzChunk * limit0; k++ )
         {
             Sig.preprocessSignalDCT01( P, size, k, direction );
