@@ -16,9 +16,13 @@ module load hdf5-icc-hpcx
 module load mkl
 module load hpcx
 
+export LD_PRELOAD=/mnt/share/codes/hpl/libfakeintel.so
+export  MKL_ENABLE_INSTRUCTIONS=AVX2
+
+
 nodelist="$(scontrol show hostname $SLURM_NODELIST)"
 
 printf "%s\n" "${nodelist[@]}" > hostfile
 
-mpirun -np 16 --hostfile hostfile --map-by ppr:1:l3cache:PE=8 ./bin/PittPack 256 256 256
-#mpirun -np $SLURM_NTASKS --hostfile hostfile  ./bin/PittPack 128 128 128 
+#mpirun -np 16 --hostfile hostfile --map-by ppr:1:l3cache:PE=8 ./bin/PittPack 576 576 576
+mpirun -np $SLURM_NTASKS --hostfile hostfile  ./bin/PittPack 128 128 128 

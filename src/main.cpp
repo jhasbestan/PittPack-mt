@@ -121,7 +121,9 @@ int main( int argcs, char *pArgs[] )
 // final write should be in the dir=2 as we transform all the data back to its original situation
 // if you dont call poisson, if you do set it equal to dir=0
 
-#if ( 1 )
+    cout << " completed" << endl;
+
+#if ( 0 )
     cout << " for writing out" << endl;
     M->setCoords( dir );
     if ( I_O == 1 )

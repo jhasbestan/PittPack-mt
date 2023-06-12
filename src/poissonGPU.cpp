@@ -730,4 +730,3 @@ void PoissonGPU::pittPack() /*!<called on CPU runs on GPU */
 
 #endif
 
-//#endif

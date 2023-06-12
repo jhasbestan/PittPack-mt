@@ -1838,6 +1838,7 @@ void PencilDcmp::IO( int app, int dir, int aligndir )
 #if ( PITTPACKACC )
 #pragma acc routine seq
 #endif
+#pragma omp declare simd
 static double exactValue( double omega, double x, int tg )
 {
     double ans = 0.0;
@@ -2122,7 +2123,7 @@ double PencilDcmp::getError()
 #if ( PITTPACKACC )
 #pragma acc loop vector private( val, val1 )
 #endif
-#pragma omp simd
+#pragma omp simd private(x,val,val1)
             for ( int i = 0; i < Nx; i++ )
             {
                 double x;
@@ -2201,6 +2202,7 @@ else
 #if ( PITTPACKACC )
 #pragma acc loop vector firstprivate( err ) reduction( + : err )
 #endif
+#pragma omp parallel for  reduction( + : err )
     for ( int i = 0; i < unitSize; i++ )
     {
         err = err + P( 2 * i );
@@ -2267,11 +2269,13 @@ void PencilDcmp::rearrangeX2Y()
 #if ( PITTPACKACC )
 #pragma acc loop worker
 #endif
+#pragma omp loop for
             for ( int j = 0; j < nyChunk; j++ )
             {
 #if ( PITTPACKACC )
 #pragma acc loop vector
 #endif
+#pragma omp simd
                 for ( int i = 0; i < nxChunk; i++ )
 
                 {
@@ -2312,11 +2316,13 @@ void PencilDcmp::assignTempX2Y( const int chunkId, const int k, double *tmp )
 #if ( PITTPACKACC )
 #pragma acc loop worker
 #endif
+#pragma omp parallel for
     for ( int j = 0; j < nyChunk; j++ )
     {
 #if ( PITTPACKACC )
 #pragma acc loop vector
 #endif
+#pragma omp simd
         for ( int i = 0; i < nxChunk; i++ )
         {
             tmp[2 * ( nxChunk * j + i )]     = P( chunkId, 0, i, j, k, 0 );
@@ -2551,11 +2557,13 @@ void PencilDcmp::assignTempY2Z( const int chunkId )
 #if ( PITTPACKACC )
 #pragma acc loop worker
 #endif
+#pragma omp parallel for
         for ( int j = 0; j < nyChunk; j++ )
         {
 #if ( PITTPACKACC )
 #pragma acc loop vector
-#endif
+#endif 
+#pragma omp simd
             for ( int i = 0; i < nxChunk; i++ )
             {
                 //   tmp[2 * ( nxChunk * j + i )] = P( chunkId, 0, i, j, k, 0 );
@@ -2608,12 +2616,14 @@ void PencilDcmp::assignBackTempY2Z( const int chunkId )
     {
 #if ( PITTPACKACC )
 #pragma acc loop worker
-#endif
+#endif 
+#pragma omp parallel for
         for ( int j = 0; j < nyChunk; j++ )
         {
 #if ( PITTPACKACC )
 #pragma acc loop vector
 #endif
+#pragma omp simd
             for ( int i = 0; i < nxChunk; i++ )
             {
                 // P( chunkId, 4, i, j, k, 0 ) = R( 2*(j+ny*i+nx*ny*k) );
@@ -2647,11 +2657,13 @@ void PencilDcmp::assignTempZ2Y( const int chunkId )
 #if ( PITTPACKACC )
 #pragma acc loop worker
 #endif
+#pragma omp parallel for
         for ( int j = 0; j < nyChunk; j++ )
         {
 #if ( PITTPACKACC )
 #pragma acc loop vector
 #endif
+#pragma omp simd
             for ( int i = 0; i < nxChunk; i++ )
             {
                 //   tmp[2 * ( nxChunk * j + i )] = P( chunkId, 0, i, j, k, 0 );
@@ -2683,11 +2695,13 @@ void PencilDcmp::assignBackTempZ2Y( const int chunkId )
 #if ( PITTPACKACC )
 #pragma acc loop worker
 #endif
+#pragma omp parallel for
         for ( int j = 0; j < nyChunk; j++ )
         {
 #if ( PITTPACKACC )
 #pragma acc loop vector
 #endif
+#pragma omp simd
             for ( int i = 0; i < nxChunk; i++ )
             {
                 //          P( chunkId, 1, i, j, k, 0 )=i+3*j;
