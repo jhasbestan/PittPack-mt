@@ -3,7 +3,9 @@
 #include "chunkedArray.hpp"
 #include "definitions.h"
 #include "mpi.h"
+#ifndef NO_HDF5
 #include "phdf5.hpp"
+#endif
 #include <iomanip>
 #include <iostream>
 #include <stdexcept>

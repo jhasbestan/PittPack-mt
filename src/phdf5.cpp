@@ -1,3 +1,5 @@
+#ifndef NO_HDF5
+
 #include "phdf5.hpp"
 #include "definitions.h"
 //#include "stdio.h"
@@ -2492,3 +2494,4 @@ void Phdf5::getQ( ChunkedArray &F, const int chunkId, int *L, const int aligndir
 
     // cout << " ============================= " << endl;
 }
+#endif

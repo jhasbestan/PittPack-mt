@@ -12,7 +12,7 @@
 
 
 module load icc
-module load hdf5-icc-hpcx
+##module load hdf5-icc-hpcx
 module load mkl
 module load hpcx
 
@@ -24,5 +24,5 @@ nodelist="$(scontrol show hostname $SLURM_NODELIST)"
 
 printf "%s\n" "${nodelist[@]}" > hostfile
 
-#mpirun -np 16 --hostfile hostfile --map-by ppr:1:l3cache:PE=8 ./bin/PittPack 576 576 576
-mpirun -np $SLURM_NTASKS --hostfile hostfile  ./bin/PittPack 128 128 128 
+mpirun -np 32 --hostfile hostfile --map-by ppr:1:l3cache:PE=4 ./bin/PittPack 576 576 576
+#mpirun -np $SLURM_NTASKS --hostfile hostfile  ./bin/PittPack 128 128 128 

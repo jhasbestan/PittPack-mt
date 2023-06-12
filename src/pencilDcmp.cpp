@@ -1830,9 +1830,10 @@ void PencilDcmp::nbrAllToAllXYOverlap()
 
 void PencilDcmp::IO( int app, int dir, int aligndir )
 {
+#ifndef NO_HDF5 
     Phdf5 IO;
-
     IO.writeMultiBlockCellCenter( P, app, dir, aligndir );
+#endif
 }
 
 #if ( PITTPACKACC )

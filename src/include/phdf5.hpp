@@ -1,5 +1,5 @@
-#ifndef _PHDF5_H_
-#define _PHDF5_H_
+#ifndef NO_HDF5
+#pragma once
 #include "chunkedArray.hpp"
 #include "communicate.hpp"
 #include "definitions.h"
