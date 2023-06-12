@@ -42,8 +42,9 @@ void PoissonCPU::readYLine( int j, fftw_complex *out )
 
 void PoissonCPU::performTransformYdir()
 {
+#ifndef NDEBUG
 cout<<" cpu version "<<endl;
-
+#endif
 #if(!PITTPACKACC)
 #pragma omp parallel
 {

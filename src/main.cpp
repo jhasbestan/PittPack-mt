@@ -85,7 +85,10 @@ int main( int argcs, char *pArgs[] )
     //       char mybc[6] = {'D', 'D', 'D', 'D', 'P', 'P'};
     //        char mybc[6] = {'D', 'D', 'D', 'D', 'N', 'N'};
     // char mybc[6] = {'N', 'N', 'N', 'N', 'N', 'N'};
-    std::cout << mybc[0] << " " << mybc[1] << " " << mybc[2] << " " << mybc[3] << " " << mybc[4] << " " << mybc[5] << std::endl;
+    if(my_rank==0)
+    {
+      std::cout << mybc[0] << " " << mybc[1] << " " << mybc[2] << " " << mybc[3] << " " << mybc[4] << " " << mybc[5] << std::endl;
+    }
     M->assignBoundary( mybc );
 
     double a[3] = {0, 0, 0};
@@ -98,7 +101,11 @@ int main( int argcs, char *pArgs[] )
 
    int dir = 2;
 
-    cout << "xxxxxxxxxxxxx set coords xxxxxxxxxxxxxxxxxxxxx" << endl;
+    if(my_rank==0)
+    {
+      cout << "xxxxxxxxxxxxx set coords xxxxxxxxxxxxxxxxxxxxx" << endl;
+    }
+
     M->setCoords( dir );
 
    // step 1) pencils with n(0,0,1) is converted to pencil with n(1,0,0)
@@ -121,7 +128,10 @@ int main( int argcs, char *pArgs[] )
 // final write should be in the dir=2 as we transform all the data back to its original situation
 // if you dont call poisson, if you do set it equal to dir=0
 
-    cout << " completed" << endl;
+    if(my_rank==0)
+    {
+      cout << " completed" << endl;
+    }
 
 #if ( 0 )
     cout << " for writing out" << endl;

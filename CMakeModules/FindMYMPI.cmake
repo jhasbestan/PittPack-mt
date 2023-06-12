@@ -61,15 +61,15 @@ find_library(
 	MPI_LIB
 	NAMES "libmpi.so" "libmpich.so"
 	PATHS ${MPI_ROOT}
-	PATH_SUFFIXES "lib" "lib64"
+	PATH_SUFFIXES "lib" "lib64" "intel64/lib"
 	NO_DEFAULT_PATH
 )
 #find includes
 find_path(
 	MPI_INCLUDES
 	NAMES "mpi.h"
-	PATHS ${MPI_ROOT}/include
-	PATH_SUFFIXES "include"
+	PATHS ${MPI_ROOT}
+	PATH_SUFFIXES "include" "intel64/include"
 	NO_DEFAULT_PATH
 )
 

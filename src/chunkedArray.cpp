@@ -28,8 +28,6 @@ PittPackResult ChunkedArray::allocate( int *n, int nbl )
         exit( 1 );
     }
 
-    cout << " allocated P with size " << arraySize << endl;
-
     for ( int i = 0; i < arraySize; i++ )
     {
         P[i] = 0.0;
@@ -286,5 +284,4 @@ ChunkedArray::~ChunkedArray()
 void ChunkedArray::getAddress( double *rt )
 {
     rt = P;
-    cout << "pointer address " << rt << endl;
 }

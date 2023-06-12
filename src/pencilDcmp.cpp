@@ -3699,8 +3699,9 @@ void PencilDcmp::extractTag()
     {
         tags[2] = -2;
     }
-
+#ifndef NDEBUG
     std::cout << "tags " << tags[0] << " " << tags[1] << " " << tags[2] << std::endl;
+#endif
 }
 
 void PencilDcmp::setScale()
@@ -3712,7 +3713,9 @@ void PencilDcmp::setScale()
     sc[1] = nyChunk * nChunk;
     scale = sc[0] * sc[1];
 
+#ifndef NDEBUG
     std::cout << "scale " << scale << std::endl;
+#endif
 #if ( PITTPACKACC )
 #pragma acc update device( scale )
 #endif
@@ -3759,11 +3762,12 @@ void PencilDcmp::detectTransforms()
         transform[2] = 'U';
     }
 
+/*
     for ( int i = 0; i < 3; i++ )
     {
         std::cout << " transform[ " << i << " ]= " << transform[i] << std::endl;
     }
-
+*/
     // detect the number of di
 }
 #if ( PITTPACKACC )
@@ -5126,7 +5130,7 @@ int PencilDcmp::solveThmBatch( const int index )
             if ( bc[4] != 'P' )
             {
                 T.thomasLowMem( x2 + i * nz, x1 + nz * i, eig, index );
-                 cout<< RED<<"solveThmBatch 0" <<RESET<<endl;
+                 //cout<< RED<<"solveThmBatch 0" <<RESET<<endl;
             }
             else
             {
@@ -5158,8 +5162,9 @@ int PencilDcmp::solveThmBatch( const int index )
      //   cout<< RED<<"solveThmBatch" <<RESET<<endl;
 
     //    clear(x2);
-
+#ifndef NDEBUG
     cout<< RED<<"full batch solveThmBatch" <<RESET<<endl;
+#endif
     int count = 0;
     int i, j;
 #if ( PITTPACKACC )
@@ -6448,7 +6453,7 @@ void PencilDcmp::pittPack() /*!<called on CPU runs on GPU */
     printX( myfile );
     myfile.close();
 #endif
-    cout << " *********************************" << endl;
+    //cout << " *********************************" << endl;
 #if ( DEBUG2 )
     //#if (1 )
     for ( int k = 0; k < 1; k++ )
