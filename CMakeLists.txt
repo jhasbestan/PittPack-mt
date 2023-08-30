@@ -61,31 +61,23 @@ message("cmake source dir:" ${CMAKE_SOURCE_DIR})
 ############################################################################
 
 # specify the path for Modules 
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/CMakeModules/")
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
 
 find_package(MYMPI ${MPI_MIN_VERSION} REQUIRED)
-if(MPI_FOUND)
 include_directories(${MPI_INCLUDES})
 message( "${Red} MPI Include Path : ${ColourReset}" ${MPI_INCLUDES})
 message( "${Red} MPI Library Path : ${ColourReset}"  ${MPI_LIBRARIES})
-endif()
-
-
 #find FFTW
-find_package(FFTW REQUIRED)
-if(FFTW_FOUND)
+find_package(MYAOCL REQUIRED)
 include_directories(${FFTW_INCLUDES})
 message("${Red} FFTW Library Found: ${ColourReset}")
-endif()
 message("${Red} ${FFTW_INCLUDES} ${ColourReset}")
 
 #find HDF5
 find_package(MYHDF5 ${HDF5_MIN_VERSION} REQUIRED)
-if(HDF5_FOUND)
-include_directories(${HDF5_INCLUDE_DIRS})
+include_directories(${HDF5_INCLUDES})
 message( "${Red} HDF5 Library Found: ${ColourReset}" ${HDF5_INCLUDE_DIRS})
 message("${Green} 2. HDF5 Library : Found ${ColourReset}")
-endif()
 
 #find_package(GOOGLETEST ${GOOGLETEST_MIN_VERSION} REQUIRED)
 if(GOOGLETEST_FOUND)
@@ -162,7 +154,7 @@ add_executable(PittPack ${OBJ} ${HEADER_FILES})
 
 # Link to external libraries here 
 #if(!GPU)
-target_link_libraries(PittPack ${HDF5_LIB} ${FFTW_LIBRARIES} ${MPI_LIBRARIES} )
+target_link_libraries(PittPack ${HDF5_LIB} ${FFTW_LIB} ${MPI_LIB} )
 #endif
 
 ############################################################################
