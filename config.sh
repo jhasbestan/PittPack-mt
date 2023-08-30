@@ -1,11 +1,11 @@
 #! /usr/bin/bash
 
 
+module load aocc-4.0
+module load aocl-4.0
+module load ompi-aocc
+module load hdf5-aocc-ompi
 
-module load hdf5-icc-hpcx
-module load icc
-module load mkl
-module load hpcx
 
 
 cd build && cmake .. && make -j 8 && cd ../bin
