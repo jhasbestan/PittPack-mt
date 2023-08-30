@@ -154,7 +154,7 @@ add_executable(PittPack ${OBJ} ${HEADER_FILES})
 
 # Link to external libraries here 
 #if(!GPU)
-target_link_libraries(PittPack ${HDF5_LIB} ${FFTW_LIB} ${MPI_LIB} -lz -ldl)
+target_link_libraries(PittPack ${HDF5_LIB} ${FFTW_LIB} ${FFTW_LIB0} ${MPI_LIB} -lz -ldl)
 #endif
 
 ############################################################################

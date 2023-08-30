@@ -36,7 +36,8 @@ find_library(BLIS_LIB
              PATH_SUFFIXES "lib"
              NO_DEFAULT_PATH)
 endif()
-find_library(FFTW_LIB 
+
+find_library(FFTW_LIB0 
              NAMES "fftw3" 
              PATHS  ${AOCL_ROOT}
              PATH_SUFFIXES "lib"

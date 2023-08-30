@@ -8,6 +8,6 @@ module load hdf5-aocc-ompi
 
 
 
-cd build && cmake .. && make -j 8 && cd ../bin
+cd build && cmake .. -DENABLE_THREAD=true && make -j 8 && cd ../bin
 
 
