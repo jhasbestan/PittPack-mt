@@ -61,31 +61,23 @@ message("cmake source dir:" ${CMAKE_SOURCE_DIR})
 ############################################################################
 
 # specify the path for Modules 
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
 
 find_package(MYMPI ${MPI_MIN_VERSION} REQUIRED)
-if(MPI_FOUND)
 include_directories(${MPI_INCLUDES})
 message( "${Red} MPI Include Path : ${ColourReset}" ${MPI_INCLUDES})
 message( "${Red} MPI Library Path : ${ColourReset}"  ${MPI_LIBRARIES})
-endif()
-
-
 #find FFTW
 find_package(MYAOCL REQUIRED)
-if(FFTW_FOUND)
 include_directories(${FFTW_INCLUDES})
 message("${Red} FFTW Library Found: ${ColourReset}")
-endif()
 message("${Red} ${FFTW_INCLUDES} ${ColourReset}")
 
 #find HDF5
 find_package(MYHDF5 ${HDF5_MIN_VERSION} REQUIRED)
-if(HDF5_FOUND)
-include_directories(${HDF5_INCLUDE_DIRS})
+include_directories(${HDF5_INCLUDES})
 message( "${Red} HDF5 Library Found: ${ColourReset}" ${HDF5_INCLUDE_DIRS})
 message("${Green} 2. HDF5 Library : Found ${ColourReset}")
-endif()
 
 #find_package(GOOGLETEST ${GOOGLETEST_MIN_VERSION} REQUIRED)
 if(GOOGLETEST_FOUND)
@@ -137,21 +129,20 @@ if($ENV{GPU1})
  SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DOMPI_SKIP_MPICXX -acc -fast -Minfo=accel -Mlarge_arrays -Mcudalib=cufft,cusparse  -ta=tesla   -std=c++11 -Minform=warn")
  SET(CMAKE_EXEC_LINKER_FLAGS "${CMAKE_EXEC_LINKER_FLAGS} -DOMPI_SKIP_MPICXX -acc -fast -Minfo=accel -Mlarge_arrays  -ta=tesla,gvmode -Mcudalib=cufft,cusparse -std=c++11" )
 else()
-#  SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++1y -O3   -Wno-unknown-pragmas  -qopenmp")
-   SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++1y -O3  -march=core-avx2 -Wall -qopenmp -qopt-report=5 ")
-#  SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++1y -O3  -march=skylake-avx512 -Wall -qopenmp")
-#  SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -acc -O3 -Minfo=accel -Mcudalib=cufft  -ta=tesla:cuda8.0,pinned   -Minfo=ccff -Minform=severe -std=c++11")
+#   SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++1y -O3   -Wno-unknown-pragmas  ")
+    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++1y -O3  -march=core-avx2 -Wall -Wno-unused-but-set-variable -Wno-unused-variable -fPIC")
+# SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -acc -O3 -Minfo=accel -Mcudalib=cufft  -ta=tesla:cuda8.0,pinned   -Minfo=ccff -Minform=severe -std=c++11")
 #  SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -acc -O3 -Minfo=accel -Mcudalib=cufft  -ta=tesla:cuda9.0   -Minfo=ccff -Minform=severe -std=c++11")
 #  SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -acc   -Minfo=accel -Mcudalib=cufft  -ta=tesla:cuda8.0   -Minfo=ccff  -std=c++11")
-#  SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -acc -g  -Minfo=accel -Mcudalib=cufft  -ta=multicore   -Minfo=ccff -Minform=severe -std=c++11")
-#  SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}  -Mcudalib=cufft  std=c++0x")   -ta=tesla:managed -
-#  SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}  -std=c++1y -pg -O3 -Wno-unused-variable -Wno-unknown-pragmas -Wno-sign-compare ")
-#  SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=c++1y  -O3 -Wunused-variable ")
-#  SET(CMAKE_EXEC_LINKER_FLAGS "${CMAKE_EXEC_LINKER_FLAGS} -Wall -std=gnu++0x" )
-   SET(CMAKE_EXEC_LINKER_FLAGS "${CMAKE_EXEC_LINKER_FLAGS} -O3 -std=c++1y -Wno-unknown-pragmas -Wno-sign-compare -qopenmp" )
-#  SET(CMAKE_EXEC_LINKER_FLAGS "${CMAKE_EXEC_LINKER_FLAGS}   -Minfo=accel -ta=tesla,cuda9.0,pinned  -Mcudalib=cufft -std=c++11" )
-#  SET(CMAKE_EXEC_LINKER_FLAGS "${CMAKE_EXEC_LINKER_FLAGS} -O3  -Minfo=accel -ta=tesla,cuda9.0  -Mcudalib=cufft -std=c++11" )
-#  SET(CMAKE_EXEC_LINKER_FLAGS "${CMAKE_EXEC_LINKER_FLAGS} -g -Minfo=accel -ta=multicore  -Mcudalib=cufft -std=c++11" )
+#    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -acc -g  -Minfo=accel -Mcudalib=cufft  -ta=multicore   -Minfo=ccff -Minform=severe -std=c++11")
+#    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}  -Mcudalib=cufft  std=c++0x")   -ta=tesla:managed -
+#   SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}  -std=c++1y -pg -O3 -Wno-unused-variable -Wno-unknown-pragmas -Wno-sign-compare ")
+#    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=c++1y  -O3 -Wunused-variable ")
+#    SET(CMAKE_EXEC_LINKER_FLAGS "${CMAKE_EXEC_LINKER_FLAGS} -Wall -std=gnu++0x" )
+    SET(CMAKE_EXEC_LINKER_FLAGS "${CMAKE_EXEC_LINKER_FLAGS} -O3 -std=c++1y -Wno-unknown-pragmas -Wno-sign-compare " )
+#   SET(CMAKE_EXEC_LINKER_FLAGS "${CMAKE_EXEC_LINKER_FLAGS}   -Minfo=accel -ta=tesla,cuda9.0,pinned  -Mcudalib=cufft -std=c++11" )
+#   SET(CMAKE_EXEC_LINKER_FLAGS "${CMAKE_EXEC_LINKER_FLAGS} -O3  -Minfo=accel -ta=tesla,cuda9.0  -Mcudalib=cufft -std=c++11" )
+  #  SET(CMAKE_EXEC_LINKER_FLAGS "${CMAKE_EXEC_LINKER_FLAGS} -g -Minfo=accel -ta=multicore  -Mcudalib=cufft -std=c++11" )
 endif()
 
 
@@ -163,7 +154,7 @@ add_executable(PittPack ${OBJ} ${HEADER_FILES})
 
 # Link to external libraries here 
 #if(!GPU)
-target_link_libraries(PittPack ${HDF5_LIB} ${FFTW_LIBRARIES} ${MPI_LIBRARIES} )
+target_link_libraries(PittPack ${HDF5_LIB} ${FFTW_LIB} ${FFTW_LIB0} ${MPI_LIB} -lz -ldl)
 #endif
 
 ############################################################################
