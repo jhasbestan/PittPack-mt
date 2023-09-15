@@ -130,7 +130,7 @@ if($ENV{GPU1})
  SET(CMAKE_EXEC_LINKER_FLAGS "${CMAKE_EXEC_LINKER_FLAGS} -DOMPI_SKIP_MPICXX -acc -fast -Minfo=accel -Mlarge_arrays  -ta=tesla,gvmode -Mcudalib=cufft,cusparse -std=c++11" )
 else()
 #   SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++1y -O3   -Wno-unknown-pragmas  ")
-    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++1y -O3  -march=core-avx2 -Wall -Wno-unused-but-set-variable -Wno-unused-variable -fPIC")
+    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++1y -O3  -march=core-avx2 -Wall -Wno-unused-but-set-variable -Wno-unused-variable -fPIC -DNO_HDF5 -fopenmp")
 # SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -acc -O3 -Minfo=accel -Mcudalib=cufft  -ta=tesla:cuda8.0,pinned   -Minfo=ccff -Minform=severe -std=c++11")
 #  SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -acc -O3 -Minfo=accel -Mcudalib=cufft  -ta=tesla:cuda9.0   -Minfo=ccff -Minform=severe -std=c++11")
 #  SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -acc   -Minfo=accel -Mcudalib=cufft  -ta=tesla:cuda8.0   -Minfo=ccff  -std=c++11")
@@ -154,7 +154,7 @@ add_executable(PittPack ${OBJ} ${HEADER_FILES})
 
 # Link to external libraries here 
 #if(!GPU)
-target_link_libraries(PittPack ${HDF5_LIB} ${FFTW_LIB} ${FFTW_LIB0} ${MPI_LIB} -lz -ldl)
+target_link_libraries(PittPack ${FFTW_LIB} ${FFTW_LIB0} ${MPI_LIB} -lz -ldl)
 #endif
 
 ############################################################################
