@@ -61,7 +61,7 @@ message("cmake source dir:" ${CMAKE_SOURCE_DIR})
 ############################################################################
 
 # specify the path for Modules 
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/CMakeModules/")
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
 
 find_package(MYMPI ${MPI_MIN_VERSION} REQUIRED)
 if(MPI_FOUND)
@@ -72,7 +72,7 @@ endif()
 
 
 #find FFTW
-find_package(FFTW REQUIRED)
+find_package(MYAOCL REQUIRED)
 if(FFTW_FOUND)
 include_directories(${FFTW_INCLUDES})
 message("${Red} FFTW Library Found: ${ColourReset}")
