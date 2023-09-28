@@ -69,14 +69,14 @@ message( "${Red} MPI Include Path : ${ColourReset}" ${MPI_INCLUDES})
 message( "${Red} MPI Library Path : ${ColourReset}"  ${MPI_LIBRARIES})
 
 #find FFTW
-#find_package(MYAOCL REQUIRED)
+find_package(MYAOCL REQUIRED)
 include_directories(${FFTW_INCLUDES})
 message("${Red} FFTW Library Found: ${ColourReset}")
 message("${Red} ${FFTW_INCLUDES} ${ColourReset}")
 
-find_package(MYMKL REQUIRED)
-include_directories(${MKL_INCLUDES})
-message("${Red} MKL DFFT Library Found: ${ColourReset}")
+#find_package(MYMKL REQUIRED)
+#include_directories(${MKL_INCLUDES})
+#message("${Red} MKL DFFT Library Found: ${ColourReset}")
 
 #find HDF5
 find_package(MYHDF5 ${HDF5_MIN_VERSION} REQUIRED)

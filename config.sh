@@ -1,7 +1,7 @@
 #! /usr/bin/bash
 
 
-
+module purge
 module load aocc-4.0
 module load hdf5-aocc-ompi
 module load aocl-4.0
