@@ -4,27 +4,29 @@
 #SBATCH --mail-user=jaber.hasbestan@amd.com
 #SBATCH --mail-type=END,FAIL
 #SBATCH --time=23:00:00
-#SBATCH --nodes=2
-#SBATCH --ntasks-per-node=64
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=8
 #SBATCH --exclusive
 #SBATCH --error=slurm-%j.error
 #SBATCH --ntasks-per-core=1
 
 
-module load icc
-##module load hdf5-icc-hpcx
-module load mkl
-module load hpcx
+module load aocc-4.0
+module load hdf5-aocc-ompi
+module load aocl-4.0
+module load ompi-aocc
+#module load hpcx
+##moduel load mkl/latest
 
-export LD_PRELOAD=/mnt/share/codes/hpl/libfakeintel.so
-export MKL_ENABLE_INSTRUCTIONS=AVX2
-export MKL_NUM_THREADS=8
+##export MKL_ENABLE_INSTRUCTIONS=AVX2
+#export MKL_NUM_THREADS=8
+export OMP_NUM_THREADS=8
 
 
 nodelist="$(scontrol show hostname $SLURM_NODELIST)"
 
 printf "%s\n" "${nodelist[@]}" > hostfile
 
-mpirun -np 16 --hostfile hostfile --map-by ppr:1:l3cache:PE=8 ./bin/PittPack 576 576 576
+mpirun -np 1 --map-by ppr:1:l3cache:PE=8 ./bin/PittPack 64 64 64 
 
 #mpirun -np $SLURM_NTASKS --hostfile hostfile  ./bin/PittPack 128 128 128 

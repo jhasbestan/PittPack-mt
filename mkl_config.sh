@@ -2,11 +2,9 @@
 
 
 
-module load aocc-4.0
-module load hdf5-aocc-ompi
-module load aocl-4.0
-module load ompi-aocc
-
+module load icc/latest
+module load impi/latest
+module load mkl/latest
 
 cd build && cmake .. -DCMAKE_BUILD_TYPE=release -DNO_HDF5=true && make -j 8 && make install && cd ../
 

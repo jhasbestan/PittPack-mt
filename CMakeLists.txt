@@ -67,11 +67,16 @@ find_package(MYMPI ${MPI_MIN_VERSION} REQUIRED)
 include_directories(${MPI_INCLUDES})
 message( "${Red} MPI Include Path : ${ColourReset}" ${MPI_INCLUDES})
 message( "${Red} MPI Library Path : ${ColourReset}"  ${MPI_LIBRARIES})
+
 #find FFTW
-find_package(MYAOCL REQUIRED)
+#find_package(MYAOCL REQUIRED)
 include_directories(${FFTW_INCLUDES})
 message("${Red} FFTW Library Found: ${ColourReset}")
 message("${Red} ${FFTW_INCLUDES} ${ColourReset}")
+
+find_package(MYMKL REQUIRED)
+include_directories(${MKL_INCLUDES})
+message("${Red} MKL DFFT Library Found: ${ColourReset}")
 
 #find HDF5
 find_package(MYHDF5 ${HDF5_MIN_VERSION} REQUIRED)
@@ -129,8 +134,8 @@ if($ENV{GPU1})
  SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DOMPI_SKIP_MPICXX -acc -fast -Minfo=accel -Mlarge_arrays -Mcudalib=cufft,cusparse  -ta=tesla   -std=c++11 -Minform=warn")
  SET(CMAKE_EXEC_LINKER_FLAGS "${CMAKE_EXEC_LINKER_FLAGS} -DOMPI_SKIP_MPICXX -acc -fast -Minfo=accel -Mlarge_arrays  -ta=tesla,gvmode -Mcudalib=cufft,cusparse -std=c++11" )
 else()
-#   SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++1y -O3   -Wno-unknown-pragmas  ")
-    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++1y -O3  -march=core-avx2 -Wall -Wno-unused-but-set-variable -Wno-unused-variable -fPIC -DNO_HDF5 -fopenmp")
+    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++1y -O3   -Wno-unknown-pragmas  -DNO_HDF5 -fopenmp ")
+#    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++1y -O3  -march=core-avx2 -Wall -Wno-unused-but-set-variable -Wno-unused-variable -fPIC -DNO_HDF5 -fopenmp")
 # SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -acc -O3 -Minfo=accel -Mcudalib=cufft  -ta=tesla:cuda8.0,pinned   -Minfo=ccff -Minform=severe -std=c++11")
 #  SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -acc -O3 -Minfo=accel -Mcudalib=cufft  -ta=tesla:cuda9.0   -Minfo=ccff -Minform=severe -std=c++11")
 #  SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -acc   -Minfo=accel -Mcudalib=cufft  -ta=tesla:cuda8.0   -Minfo=ccff  -std=c++11")
@@ -139,7 +144,7 @@ else()
 #   SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}  -std=c++1y -pg -O3 -Wno-unused-variable -Wno-unknown-pragmas -Wno-sign-compare ")
 #    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=c++1y  -O3 -Wunused-variable ")
 #    SET(CMAKE_EXEC_LINKER_FLAGS "${CMAKE_EXEC_LINKER_FLAGS} -Wall -std=gnu++0x" )
-    SET(CMAKE_EXEC_LINKER_FLAGS "${CMAKE_EXEC_LINKER_FLAGS} -O3 -std=c++1y -Wno-unknown-pragmas -Wno-sign-compare " )
+#    SET(CMAKE_EXEC_LINKER_FLAGS "${CMAKE_EXEC_LINKER_FLAGS} -O3 -std=c++1y -Wno-unknown-pragmas -Wno-sign-compare " )
 #   SET(CMAKE_EXEC_LINKER_FLAGS "${CMAKE_EXEC_LINKER_FLAGS}   -Minfo=accel -ta=tesla,cuda9.0,pinned  -Mcudalib=cufft -std=c++11" )
 #   SET(CMAKE_EXEC_LINKER_FLAGS "${CMAKE_EXEC_LINKER_FLAGS} -O3  -Minfo=accel -ta=tesla,cuda9.0  -Mcudalib=cufft -std=c++11" )
   #  SET(CMAKE_EXEC_LINKER_FLAGS "${CMAKE_EXEC_LINKER_FLAGS} -g -Minfo=accel -ta=multicore  -Mcudalib=cufft -std=c++11" )
@@ -154,7 +159,7 @@ add_executable(PittPack ${OBJ} ${HEADER_FILES})
 
 # Link to external libraries here 
 #if(!GPU)
-target_link_libraries(PittPack ${FFTW_LIB} ${FFTW_LIB0} ${MPI_LIB} -lz -ldl)
+target_link_libraries(PittPack ${FFTW_LIB} ${FFTW_LIB0} ${MPI_LIB} -lz -ldl ${MKL_LIB})
 #endif
 
 ############################################################################
