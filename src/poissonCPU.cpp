@@ -1,6 +1,6 @@
 #include "definitions.h"
 #include "params.h"
-#include "params.h"
+#include <omp.h>
 #include "pencilDcmp.hpp"
 
 void PoissonCPU::writeYLine( int j, fftw_complex *outC )
@@ -59,13 +59,13 @@ cout<<" cpu version "<<endl;
     for ( int j = 0; j < nxChunk * nzChunk; j++ )
     {
         readYLine( j, in );
-
+        fftw_plan_with_nthreads(omp_get_max_threads());
         pl = fftw_plan_dft_1d( nyChunk * nChunk, in, out, FFTW_FORWARD, FFTW_ESTIMATE );
 
         fftw_execute( pl );
         
         fftw_destroy_plan(pl);
-        fftw_cleanup();
+        fftw_cleanup_threads();
         writeYLine( j, out );
     }
 
@@ -94,11 +94,12 @@ void PoissonCPU::performInverseTransformYdir()
     {
         readYLine( j, in );
 
+        fftw_plan_with_nthreads(omp_get_max_threads());
         pl = fftw_plan_dft_1d( nyChunk * nChunk, in, out, FFTW_BACKWARD, FFTW_ESTIMATE );
 
         fftw_execute( pl );
        fftw_destroy_plan(pl);
-       fftw_cleanup();
+       fftw_cleanup_threads();
 
        writeYLine( j, out );
     }
@@ -175,11 +176,12 @@ void PoissonCPU::performInverseTransformXdir()
     {
         readXLine( j, in );
 
+        fftw_plan_with_nthreads(omp_get_max_threads());
         pl = fftw_plan_dft_1d( nxChunk * nChunk, in, out, FFTW_BACKWARD, FFTW_ESTIMATE );
 
         fftw_execute( pl );
         fftw_destroy_plan(pl);
-        fftw_cleanup();
+        fftw_cleanup_threads();
 
 
         writeXLine( j, out );
@@ -225,6 +227,7 @@ void PoissonCPU::performTransformXdir()
 
         readXLine( j, in );
 
+        fftw_plan_with_nthreads(omp_get_max_threads());
         pl = fftw_plan_dft_1d( nxChunk * nChunk, in, out, FFTW_FORWARD, FFTW_ESTIMATE );
 #if ( DEBUG0 )
         if ( This == myRank )
@@ -235,7 +238,7 @@ void PoissonCPU::performTransformXdir()
 
         fftw_execute( pl );
     fftw_destroy_plan(pl);
-    fftw_cleanup();
+    fftw_cleanup_threads();
 
 
         writeXLine( j, out );

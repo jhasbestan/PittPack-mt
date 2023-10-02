@@ -475,8 +475,8 @@ private:
 class PoissonCPU : public PencilDcmp
 {
 public:
-    PoissonCPU( int argcs, char *pArgs[], int nx, int ny, int nz ): PencilDcmp( argcs, pArgs, nx, ny, nz ){}; /*!< Alternative Class constructor */
-    PoissonCPU( int nx, int ny, int nz, int p0 ) : PencilDcmp( nx, ny, nz, p0, p0 ){}; /*!< constructor */
+    PoissonCPU( int argcs, char *pArgs[], int nx, int ny, int nz ): PencilDcmp( argcs, pArgs, nx, ny, nz ){fftw_init_threads();}; /*!< Alternative Class constructor */
+    PoissonCPU( int nx, int ny, int nz, int p0 ) : PencilDcmp( nx, ny, nz, p0, p0 ){fftw_init_threads();}; /*!< constructor */
 
 private:
    void readYLine( int j, fftw_complex *out );
