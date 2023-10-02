@@ -229,10 +229,36 @@ void PoissonCPU::performInverseTransformXdir()
 {
     fftw_plan     pl;
     fftw_complex *in;
-    in = (fftw_complex *)fftw_malloc( nChunk * nxChunk * sizeof( fftw_complex ) );
+    in = (fftw_complex *)fftw_malloc( nChunk * nxChunk *nxChunk * nzChunk * sizeof( fftw_complex ) );
 
     fftw_complex *out;
-    out = (fftw_complex *)fftw_malloc( nChunk * nxChunk * sizeof( fftw_complex ) );
+    out = (fftw_complex *)fftw_malloc( nChunk * nxChunk * nxChunk * nzChunk * sizeof( fftw_complex ) );
+
+    #pragma omp parallel for
+    for ( int j = 0; j < nyChunk * nzChunk; j++ )
+    {
+        readXLine( j, in+j*nChunk*nxChunk );
+    }
+
+    int howmany = nxChunk * nzChunk;
+    int rank = 1;
+    const int n = nChunk * nyChunk;
+    int stride = 1;
+    int dist = nChunk * nyChunk;
+    int *nembed=NULL;
+    fftw_plan_with_nthreads(omp_get_max_threads());
+    pl = fftw_plan_many_dft(rank, &n, howmany,
+                             in, nembed,
+                             stride, dist,
+                             out, nembed,
+                             stride, dist,
+                             FFTW_BACKWARD, FFTW_ESTIMATE);
+
+    fftw_execute( pl );
+    fftw_destroy_plan(pl);
+    fftw_cleanup_threads();
+
+/*
 //#pragma omp for
     for ( int j = 0; j < nyChunk * nzChunk; j++ )
     {
@@ -249,6 +275,14 @@ void PoissonCPU::performInverseTransformXdir()
         writeXLine( j, out );
     }
 
+*/
+
+   #pragma omp parallel for
+    for ( int j = 0; j < nyChunk * nzChunk; j++ )
+    {
+        writeYLine( j, out+j*nChunk*nxChunk );
+    }
+
     fftw_free( out );
     fftw_free( in );
  
@@ -258,6 +292,48 @@ void PoissonCPU::performInverseTransformXdir()
 
 void PoissonCPU::performTransformXdir()
 {
+
+    fftw_plan     pl;
+    fftw_complex *in;
+    in = (fftw_complex *)fftw_malloc( nChunk * nxChunk *nxChunk * nzChunk * sizeof( fftw_complex ) );
+
+    fftw_complex *out;
+    out = (fftw_complex *)fftw_malloc( nChunk * nxChunk * nxChunk * nzChunk * sizeof( fftw_complex ) );
+
+    #pragma omp parallel for
+    for ( int j = 0; j < nyChunk * nzChunk; j++ )
+    {
+        readXLine( j, in+j*nChunk*nxChunk );
+    }
+
+    int howmany = nxChunk * nzChunk;
+    int rank = 1;
+    const int n = nChunk * nyChunk;
+    int stride = 1;
+    int dist = nChunk * nyChunk;
+    int *nembed=NULL;
+    fftw_plan_with_nthreads(omp_get_max_threads());
+    pl = fftw_plan_many_dft(rank, &n, howmany,
+                             in, nembed,
+                             stride, dist,
+                             out, nembed,
+                             stride, dist,
+                             FFTW_FORWARD, FFTW_ESTIMATE);
+
+    fftw_execute( pl );
+    fftw_destroy_plan(pl);
+    fftw_cleanup_threads();
+
+   #pragma omp parallel for
+    for ( int j = 0; j < nyChunk * nzChunk; j++ )
+    {
+        writeYLine( j, out+j*nChunk*nxChunk );
+    }
+
+    fftw_free( out );
+    fftw_free( in );
+ 
+/*
 //cout <<" here "<<endl;
 #if(!PITTPACKACC)
     fftw_plan pl;
@@ -312,6 +388,7 @@ void PoissonCPU::performTransformXdir()
     fftw_free( in );
 
 #endif
+*/
 //  cout<< " poisson is calling "<<endl;
 }
 
