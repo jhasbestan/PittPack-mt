@@ -70,7 +70,7 @@ message( "${Red} MPI Library Path : ${ColourReset}"  ${MPI_LIBRARIES})
 
 #find FFTW
 if(AOCL)
-message("MKL enabled")
+message("AOCL enabled")
 find_package(MYAOCL REQUIRED)
 include_directories(${FFTW_INCLUDES})
 message("${Red} FFTW Library Found: ${ColourReset}")

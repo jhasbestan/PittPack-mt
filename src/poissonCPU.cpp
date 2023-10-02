@@ -84,7 +84,7 @@ cout<<" cpu version "<<endl;
     }
 
     fftw_destroy_plan(pl);
-    fftw_cleanup_threads();
+//    fftw_cleanup_threads();
     fftw_free( out );
     fftw_free( in );
 }
@@ -111,6 +111,7 @@ void PoissonCPU::performInverseTransformYdir()
 //#pragma omp parallel
 {
 #if(!PITTPACKACC)
+    fftw_init_threads();
     fftw_plan     pl;
     fftw_complex *in;
     in = (fftw_complex *)fftw_malloc( nChunk * nyChunk * nxChunk * nzChunk * sizeof( fftw_complex ) );
@@ -141,7 +142,7 @@ void PoissonCPU::performInverseTransformYdir()
     fftw_execute( pl );
 
     fftw_destroy_plan(pl);
-    fftw_cleanup_threads();
+//    fftw_cleanup_threads();
 
 
     
@@ -166,7 +167,7 @@ void PoissonCPU::performInverseTransformYdir()
 
         fftw_execute( pl );
        fftw_destroy_plan(pl);
-       fftw_cleanup_threads();
+//       fftw_cleanup_threads();
 
        writeYLine( j, out );
     }
@@ -240,11 +241,11 @@ void PoissonCPU::performInverseTransformXdir()
         readXLine( j, in+j*nChunk*nxChunk );
     }
 
-    int howmany = nxChunk * nzChunk;
+    int howmany = nyChunk * nzChunk;
     int rank = 1;
-    const int n = nChunk * nyChunk;
+    const int n = nChunk * nxChunk;
     int stride = 1;
-    int dist = nChunk * nyChunk;
+    int dist = nChunk * nxChunk;
     int *nembed=NULL;
     fftw_plan_with_nthreads(omp_get_max_threads());
     pl = fftw_plan_many_dft(rank, &n, howmany,
@@ -256,7 +257,7 @@ void PoissonCPU::performInverseTransformXdir()
 
     fftw_execute( pl );
     fftw_destroy_plan(pl);
-    fftw_cleanup_threads();
+ //   fftw_cleanup_threads();
 
 /*
 //#pragma omp for
@@ -306,11 +307,11 @@ void PoissonCPU::performTransformXdir()
         readXLine( j, in+j*nChunk*nxChunk );
     }
 
-    int howmany = nxChunk * nzChunk;
+    int howmany = nyChunk * nzChunk;
     int rank = 1;
-    const int n = nChunk * nyChunk;
+    const int n = nChunk * nxChunk;
     int stride = 1;
-    int dist = nChunk * nyChunk;
+    int dist = nChunk * nxChunk;
     int *nembed=NULL;
     fftw_plan_with_nthreads(omp_get_max_threads());
     pl = fftw_plan_many_dft(rank, &n, howmany,
@@ -322,7 +323,7 @@ void PoissonCPU::performTransformXdir()
 
     fftw_execute( pl );
     fftw_destroy_plan(pl);
-    fftw_cleanup_threads();
+//    fftw_cleanup_threads();
 
    #pragma omp parallel for
     for ( int j = 0; j < nyChunk * nzChunk; j++ )
