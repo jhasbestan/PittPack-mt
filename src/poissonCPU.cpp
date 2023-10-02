@@ -51,11 +51,45 @@ cout<<" cpu version "<<endl;
     fftw_plan pl;
 
     fftw_complex *in;
-    in = (fftw_complex *)fftw_malloc( nChunk * nyChunk * sizeof( fftw_complex ) );
+    in = (fftw_complex *)fftw_malloc( nChunk * nyChunk * nxChunk *nzChunk * sizeof( fftw_complex ) );
 
     fftw_complex *out;
-    out = (fftw_complex *)fftw_malloc( nChunk * nyChunk * sizeof( fftw_complex ) );
-//#pragma omp for
+    out = (fftw_complex *)fftw_malloc( nChunk * nyChunk * nxChunk * nzChunk * sizeof( fftw_complex ) );
+#pragma omp parallel for
+    for ( int j = 0; j < nxChunk * nzChunk; j++ )
+    {
+        readYLine( j, in+j*nChunk*nyChunk );
+    }
+
+    int howmany = nxChunk * nzChunk;
+    int rank = 1;
+    const int n = nChunk * nyChunk; 
+    int stride = 1;
+    int dist = nChunk * nyChunk;
+    int *nembed=NULL;
+    fftw_plan_with_nthreads(omp_get_max_threads());
+    pl = fftw_plan_many_dft(rank, &n, howmany,
+                             in, nembed,
+                             stride, dist,
+                             out, nembed,
+                             stride, dist,
+                             FFTW_FORWARD, FFTW_ESTIMATE);
+
+    fftw_execute( pl );
+        
+#pragma omp parallel for
+    for ( int j = 0; j < nxChunk * nzChunk; j++ )
+    {
+        writeYLine( j, out+j*nChunk*nyChunk );
+    }
+
+    fftw_destroy_plan(pl);
+    fftw_cleanup_threads();
+    fftw_free( out );
+    fftw_free( in );
+}
+#endif
+/* old version
     for ( int j = 0; j < nxChunk * nzChunk; j++ )
     {
         readYLine( j, in );
@@ -68,13 +102,7 @@ cout<<" cpu version "<<endl;
         fftw_cleanup_threads();
         writeYLine( j, out );
     }
-
-    fftw_free( out );
-    fftw_free( in );
-}
-#endif
-//    fftw_destroy_plan(pl);
-//    fftw_cleanup();
+*/
 
 }
 
@@ -85,10 +113,49 @@ void PoissonCPU::performInverseTransformYdir()
 #if(!PITTPACKACC)
     fftw_plan     pl;
     fftw_complex *in;
-    in = (fftw_complex *)fftw_malloc( nChunk * nyChunk * sizeof( fftw_complex ) );
+    in = (fftw_complex *)fftw_malloc( nChunk * nyChunk * nxChunk * nzChunk * sizeof( fftw_complex ) );
 
     fftw_complex *out;
-    out = (fftw_complex *)fftw_malloc( nChunk * nyChunk * sizeof( fftw_complex ) );
+    out = (fftw_complex *)fftw_malloc( nChunk * nyChunk * nxChunk * nzChunk * sizeof( fftw_complex ) );
+
+#pragma omp parallel for
+    for ( int j = 0; j < nxChunk * nzChunk; j++ )
+    {
+        readYLine( j, in+j*nChunk*nyChunk );
+    }
+
+    int howmany = nxChunk * nzChunk;
+    int rank = 1;
+    const int n = nChunk * nyChunk;
+    int stride = 1;
+    int dist = nChunk * nyChunk;
+    int *nembed=NULL;
+    fftw_plan_with_nthreads(omp_get_max_threads());
+    pl = fftw_plan_many_dft(rank, &n, howmany,
+                             in, nembed,
+                             stride, dist,
+                             out, nembed,
+                             stride, dist,
+                             FFTW_BACKWARD, FFTW_ESTIMATE);
+
+    fftw_execute( pl );
+
+    fftw_destroy_plan(pl);
+    fftw_cleanup_threads();
+
+
+    
+#pragma omp parallel for
+    for ( int j = 0; j < nxChunk * nzChunk; j++ )
+    {
+        writeYLine( j, out+j*nChunk*nyChunk );
+    }
+
+    fftw_free( out );
+    fftw_free( in );
+}
+#endif
+/*
 //#pragma omp for
     for ( int j = 0; j < nxChunk * nzChunk; j++ )
     {
@@ -103,12 +170,7 @@ void PoissonCPU::performInverseTransformYdir()
 
        writeYLine( j, out );
     }
-
-    
-    fftw_free( out );
-    fftw_free( in );
-}
-#endif
+*/
 
 }
 
