@@ -29,6 +29,6 @@ printf "%s\n" "${nodelist[@]}" > hostfile
 
 #mpirun -np 1 --map-by ppr:1:l3cache:PE=8 ./bin/PittPack 64 64 64 
 
-mpirun -np $SLURM_NTASKS --report-bindings --map-by ppr:1:l3cache:PE=8 ./bin/PittPack 512 512 512
+mpirun -np $SLURM_NTASKS --report-bindings --map-by ppr:1:l3cache:PE=8 ./bin/PittPack 256 256 256
 
 #mpirun -np $SLURM_NTASKS --hostfile hostfile  ./bin/PittPack 128 128 128 

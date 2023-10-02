@@ -7,7 +7,7 @@ void PoissonCPU::writeYLine( int j, fftw_complex *outC )
 {
 #if(!PITTPACKACC)
 
-#pragma omp simd
+#pragma omp parallel for
     for ( int i = 0; i < nChunk * nyChunk; i++ )
     {
         PencilDcmp::P( 2 * nyChunk * nChunk * j + 2 * i )     = outC[i][0];
@@ -25,7 +25,7 @@ void PoissonCPU::writeYLine( int j, fftw_complex *outC )
 void PoissonCPU::readYLine( int j, fftw_complex *out )
 {
 #if(!PITTPACKACC)
-#pragma omp simd
+#pragma omp parallel for
     for ( int i = 0; i < nChunk * nyChunk; i++ )
     {
         out[i][0] = PencilDcmp::P( 2 * ( nChunk * nyChunk ) * j + 2 * i );
@@ -46,7 +46,7 @@ void PoissonCPU::performTransformYdir()
 cout<<" cpu version "<<endl;
 #endif
 #if(!PITTPACKACC)
-#pragma omp parallel
+//#pragma omp parallel
 {
     fftw_plan pl;
 
@@ -55,7 +55,7 @@ cout<<" cpu version "<<endl;
 
     fftw_complex *out;
     out = (fftw_complex *)fftw_malloc( nChunk * nyChunk * sizeof( fftw_complex ) );
-#pragma omp for
+//#pragma omp for
     for ( int j = 0; j < nxChunk * nzChunk; j++ )
     {
         readYLine( j, in );
@@ -80,7 +80,7 @@ cout<<" cpu version "<<endl;
 
 void PoissonCPU::performInverseTransformYdir()
 {
-#pragma omp parallel
+//#pragma omp parallel
 {
 #if(!PITTPACKACC)
     fftw_plan     pl;
@@ -89,7 +89,7 @@ void PoissonCPU::performInverseTransformYdir()
 
     fftw_complex *out;
     out = (fftw_complex *)fftw_malloc( nChunk * nyChunk * sizeof( fftw_complex ) );
-#pragma omp for
+//#pragma omp for
     for ( int j = 0; j < nxChunk * nzChunk; j++ )
     {
         readYLine( j, in );
@@ -114,7 +114,8 @@ void PoissonCPU::performInverseTransformYdir()
 void PoissonCPU::readXLine( int j, fftw_complex *out )
 {
 #if(!PITTPACKACC)
-#pragma omp simd
+//#pragma omp simd
+#pragma omp parallel for
     for ( int i = 0; i < nChunk * nxChunk; i++ )
     {
         out[i][0] = PencilDcmp::P( 2 * ( nChunk * nxChunk ) * j + 2 * i );
@@ -136,7 +137,7 @@ void PoissonCPU::readXLine( int j, fftw_complex *out )
 void PoissonCPU::writeXLine( int j, fftw_complex *outC )
 {
 #if(!PITTPACKACC)
-#pragma omp simd
+#pragma omp parallel for
     for ( int i = 0; i < nChunk * nxChunk; i++ )
     {
         PencilDcmp::P( 2 * nxChunk * nChunk * j + 2 * i )     = outC[i][0];
@@ -161,7 +162,7 @@ void PoissonCPU::writeXLine( int j, fftw_complex *outC )
 void PoissonCPU::performInverseTransformXdir()
 {
 #if(!PITTPACKACC)
-#pragma omp parallel
+//#pragma omp parallel
 {
     fftw_plan     pl;
     fftw_complex *in;
@@ -169,7 +170,7 @@ void PoissonCPU::performInverseTransformXdir()
 
     fftw_complex *out;
     out = (fftw_complex *)fftw_malloc( nChunk * nxChunk * sizeof( fftw_complex ) );
-#pragma omp for
+//#pragma omp for
     for ( int j = 0; j < nyChunk * nzChunk; j++ )
     {
         readXLine( j, in );
